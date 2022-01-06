@@ -93,6 +93,26 @@ async function server() {
             const result = await clothCOllection.find( query).toArray()
             res.json(result)
         })
+        
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await clothCOllection.findOne(query);
+            res.send(result)
+        })
+
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id
+            const updateOrder = req.body
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {status: updateOrder.status}
+            }
+            const result = await clothCOllection.updateOne(filter, updateDoc, options)
+            console.log(result);
+            res.json(result)
+        })
   
         app.post('/orders', async (req, res) => {
             const result = await clothCOllection.insertOne(req.body)
@@ -183,7 +203,14 @@ async function server() {
         //     res.json(result)
         // })
 
+        //DELETE API
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await clothCOllection.deleteOne(query);
+            res.send(result)
 
+        })
 
 
 
