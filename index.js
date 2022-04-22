@@ -5,6 +5,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config()
 const ObjectId = require('mongodb').ObjectId
 const admin = require("firebase-admin");
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 const port = process.env.PORT || 5000;
 
@@ -212,7 +213,18 @@ async function server() {
 
         })
 
+        //payment from user
 
+        app.post("/create-payment-intent", async (req, res) => {
+            const paymentInfo = req.body;
+            const amount = paymentInfo.price * 100 //stripe uses cent--- 5 * 100
+            const paymentIntent = await stripe.paymentIntents.create({
+              amount: amount,
+                currency: 'usd',
+              payment_method_types:['card']
+            });
+            res.json({clientSecret: paymentIntent.client_secret})
+        });
 
 
 
