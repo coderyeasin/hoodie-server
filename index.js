@@ -220,8 +220,11 @@ async function server() {
             const amount = paymentInfo.price * 100 //stripe uses cent--- 5 * 100
             const paymentIntent = await stripe.paymentIntents.create({
               amount: amount,
-                currency: 'usd',
-              payment_method_types:['card']
+              currency: "usd",
+              automatic_payment_methods: {
+                enabled: true,
+              },
+              //   payment_method_types:['card']
             });
             res.json({clientSecret: paymentIntent.client_secret})
         });
