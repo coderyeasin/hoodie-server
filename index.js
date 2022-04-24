@@ -102,24 +102,28 @@ async function server() {
             res.send(result)
         })
 
+        app.post("/orders", async (req, res) => {
+          const result = await clothCOllection.insertOne(req.body);
+          console.log(result);
+          res.json(result);
+        });
+
         app.put('/orders/:id', async (req, res) => {
             const id = req.params.id
             const updateOrder = req.body
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true }
             const updateDoc = {
-                $set: {status: updateOrder.status}
+                $set: {
+                    status: updateOrder.status,
+                    payment: updateOrder.payment
+                }
             }
             const result = await clothCOllection.updateOne(filter, updateDoc, options)
             console.log(result);
             res.json(result)
         })
   
-        app.post('/orders', async (req, res) => {
-            const result = await clothCOllection.insertOne(req.body)
-            console.log(result);
-            res.json(result)
-        })
 /////////////////////////////////////
         app.get('/allusers', async (req, res) => {
             const result = await clothCOllection.find({}).toArray()
